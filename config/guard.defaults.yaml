@@ -1,0 +1,57 @@
+# Generic fallback when r1c-v3.schema.yaml is not mounted.
+schema: guard-defaults
+version: "1.1"
+
+agent_port: 11800
+lane_mirror_ports: true
+max_queue_size: 64
+cch_normalize: true
+gpu_group_exclusive: false
+
+lanes:
+  planner:
+    tag: qwen3.8-128k
+    port: 11434
+    endpoint_key: planner
+    container: ollama-planner
+    max_parallel: 1
+    gpu_group: gpu_1070_1
+  atomic:
+    tag: qwen3.8-128k
+    port: 11439
+    endpoint_key: atomic
+    container: ollama-atomic
+    max_parallel: 2
+    gpu_group: gpu_1070_2
+  coder:
+    tag: coder-critic
+    port: 11436
+    endpoint_key: coder
+    container: ollama-coder
+    max_parallel: 1
+    gpu_group: gpu_1080
+  chat:
+    tag: chat-analyzer-92k
+    port: 11435
+    endpoint_key: chat
+    container: ollama-chat
+    max_parallel: 1
+    gpu_group: gpu_1080
+  nomic:
+    tag: nomic-embed-text
+    port: 11438
+    endpoint_key: nomic
+    container: ollama-nomic
+    max_parallel: 2
+    gpu_group: gpu_1080
+
+legacy_tags:
+  qwen3.8: qwen3.8-128k
+  qwen3.8-64k: qwen3.8-128k
+  qwen3.8-4b: qwen3.8-128k
+  qwen3.8:latest: qwen3.8-128k
+  chat-analyzer: chat-analyzer-92k
+  planner_explorer_q4_K_M: qwen3.8-128k
+  vibethinker:3b: qwen3.8-128k
+  qwen2.5-coder:7b-instruct: coder-critic
+  qwen2.5-coder:7b-openclaw: coder-critic

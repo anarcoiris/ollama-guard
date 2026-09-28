@@ -1,0 +1,11 @@
+# Phase 2 overlay — Guard owns host lane mirror ports.
+# Remove host `ports:` from ollama-planner/chat/coder/paracoder in multi-gpu compose first.
+
+services:
+  ollama-guard:
+    ports:
+      - "11800:11800"
+      - "11434:11434"
+      - "11435:11435"
+      - "11436:11436"
+      - "11437:11437"

@@ -1,0 +1,31 @@
+# Ollama Guard overlay — Phase 1: agent API only (:11800)
+#
+#   cd Ollama/guard
+#   docker compose -f ../docker/docker-compose.multi-gpu.yml -f docker-compose.guard.yml up -d
+#
+# Phase 2 (lane mirrors): add -f docker-compose.guard-mirrors.yml
+
+services:
+  ollama-guard:
+    build: .
+    container_name: ollama-guard
+    ports:
+      - "11800:11800"
+    volumes:
+      - ../docker/models/r1c-v3.schema.yaml:/config/schema.yaml:ro
+      - ../docker/models/registry.yaml:/config/registry.yaml:ro
+      - ../logs/guard:/logs
+    environment:
+      GUARD_SCHEMA: /config/schema.yaml
+      GUARD_REGISTRY: /config/registry.yaml
+      GUARD_BACKENDS_MODE: docker
+      GUARD_LANE_MIRRORS: "1"
+      GUARD_CCH_NORMALIZE: "1"
+      GUARD_METRICS_PATH: /logs/metrics.jsonl
+      GUARD_MAX_QUEUE: "64"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:11800/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
